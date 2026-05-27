@@ -108,6 +108,7 @@ data "aws_iam_policy_document" "deploy" {
       "ecr:DeleteRepository",
       "ecr:TagResource",
       "ecr:UntagResource",
+      "ecr:ListTagsForResource",
       "ecr:GetRepositoryPolicy",
       "ecr:SetRepositoryPolicy",
     ]
@@ -126,8 +127,10 @@ data "aws_iam_policy_document" "deploy" {
       "lambda:ListVersionsByFunction",
       "lambda:AddPermission",
       "lambda:RemovePermission",
+      "lambda:GetPolicy",
       "lambda:TagResource",
       "lambda:UntagResource",
+      "lambda:ListTags",
     ]
     resources = ["*"]
   }
@@ -166,7 +169,9 @@ data "aws_iam_policy_document" "deploy" {
       "logs:DescribeLogGroups",
       "logs:PutRetentionPolicy",
       "logs:TagResource",
+      "logs:UntagResource",
       "logs:ListTagsForResource",
+      "logs:ListTagsLogGroup",
     ]
     resources = ["*"]
   }
