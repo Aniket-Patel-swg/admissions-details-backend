@@ -52,8 +52,9 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     outputs:
+      # Only pass image_tag between jobs — image_uri contains AWS_ACCOUNT_ID and
+      # GitHub redacts secret substrings in job outputs (deploy-lambda would get "").
       image_tag: ${{ steps.tag.outputs.tag }}
-      image_uri: ${{ steps.tag.outputs.uri }}
     steps:
       - uses: actions/checkout@v4
 
@@ -140,6 +141,9 @@ jobs:
   deploy-lambda:
     needs: [build-and-push, terraform]
     runs-on: ubuntu-latest
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.image_tag }}
+      LAMBDA_FUNCTION: ${{ needs.terraform.outputs.lambda_function_name }}
     steps:
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
@@ -148,17 +152,24 @@ jobs:
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Update Lambda function code
+        env:
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
         run: |
           set -euo pipefail
+          : "${IMAGE_TAG:?image_tag job output is empty}"
+          : "${LAMBDA_FUNCTION:?lambda_function_name job output is empty}"
+          : "${AWS_ACCOUNT_ID:?AWS_ACCOUNT_ID secret is not set}"
+          IMAGE_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${SERVICE}:${IMAGE_TAG}"
+          echo "Deploying ${IMAGE_URI} -> ${LAMBDA_FUNCTION}"
           aws lambda update-function-code \
-            --function-name "${{ needs.terraform.outputs.lambda_function_name }}" \
-            --image-uri "${{ needs.build-and-push.outputs.image_uri }}" \
+            --function-name "$LAMBDA_FUNCTION" \
+            --image-uri "$IMAGE_URI" \
             --region "$AWS_REGION" >/dev/null
           aws lambda wait function-updated \
-            --function-name "${{ needs.terraform.outputs.lambda_function_name }}" \
+            --function-name "$LAMBDA_FUNCTION" \
             --region "$AWS_REGION"
           aws lambda publish-version \
-            --function-name "${{ needs.terraform.outputs.lambda_function_name }}" \
+            --function-name "$LAMBDA_FUNCTION" \
             --description "GH run ${GITHUB_RUN_NUMBER} ${GITHUB_SHA::7}" \
             --region "$AWS_REGION" >/dev/null
 
