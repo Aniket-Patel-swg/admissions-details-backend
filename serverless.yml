@@ -1,0 +1,168 @@
+service: js-api
+build:
+  esbuild:
+    bundle: true
+    format: esm
+    target: node20
+    platform: node
+    sourcemap: true
+    # Cheerio pulls iconv-lite/safer-buffer with CJS requires; bundling breaks under ESM ("Dynamic require of buffer").
+    external:
+      - cheerio
+      - axios
+
+provider:
+  name: aws
+  runtime: nodejs20.x # Latest LTS in 2026
+  environment:
+    # Base URLs of the ECR-image Lambdas serving the FastAPI predictors.
+    # Override per-stage via `--param='...'` or your secrets store.
+    PERCENTILE_PREDICTOR_URL: ${env:PERCENTILE_PREDICTOR_URL, ''}
+    COLLEGE_PREDICTOR_URL: ${env:COLLEGE_PREDICTOR_URL, ''}
+    MARKS_PREDICTOR_URL: ${env:MARKS_PREDICTOR_URL, ''}
+
+functions:
+  hello:
+    handler: src/handlers/httpHandler.hello
+    events:
+      - http:
+          path: hello
+          method: get
+
+  admissionsDeadline:
+    handler: src/handlers/admissions-deadline-handler.admissionsDeadline
+    events:
+      - http:
+          path: admissions-deadline
+          method: get
+
+  admissionsPdeuAllIndia:
+    handler: src/handlers/pdeu/admissions-handler.admissionsPdeuAllIndia
+    events:
+      - http:
+          path: admissions/pdeu/all_india
+          method: get
+
+  admissionsPdeuPrograms:
+    handler: src/handlers/pdeu/admissions-handler.admissionsPdeuPrograms
+    events:
+      - http:
+          path: admissions/pdeu/programs
+          method: get
+
+  admissionsNirmaBtechSection:
+    handler: src/handlers/nirma/admissions-handler.admissionsNirmaBtechSection
+    events:
+      - http:
+          path: admissions/nirma/btech/{section}
+          method: get
+
+  placementsBvmPlacementDetails:
+    handler: src/handlers/bvm/placement-handler.placementsBvmPlacementDetails
+    events:
+      - http:
+          path: placements/bvm/placement-details
+          method: get
+
+  placementsNirmaReports:
+    handler: src/handlers/nirma/placement-handler.placementsNirmaReports
+    events:
+      - http:
+          path: placements/nirma/reports
+          method: get
+
+  placementsNirmaBtechStatistics:
+    handler: src/handlers/nirma/placement-handler.placementsNirmaBtechStatistics
+    events:
+      - http:
+          path: placements/nirma/btech-statistics
+          method: get
+
+  admissionsAuCalendar:
+    handler: src/handlers/au/admissions-handler.admissionsAuCalendar
+    events:
+      - http:
+          path: admissions/au/calendar
+          method: get
+
+  admissionsAuUgFees:
+    handler: src/handlers/au/admissions-handler.admissionsAuUgFees
+    events:
+      - http:
+          path: admissions/au/ug-fees
+          method: get
+
+  admissionsDaiictSection:
+    handler: src/handlers/daiict/admissions-handler.admissionsDaiictSection
+    events:
+      - http:
+          path: admissions/daiict/{category}/{section}
+          method: get
+
+  admissionsLdceUgPrograms:
+    handler: src/handlers/ldce/admissions-handler.admissionsLdceUgPrograms
+    events:
+      - http:
+          path: admissions/ldce/ug-programs
+          method: get
+
+  admissionsGcetDetails:
+    handler: src/handlers/gcet/admissions-handler.admissionsGcetDetails
+    events:
+      - http:
+          path: admissions/gcet/details
+          method: get
+
+  admissionsDduBtechCategory:
+    handler: src/handlers/ddu/admissions-handler.admissionsDduBtechCategory
+    events:
+      - http:
+          path: admissions/ddu/btech/{category}
+          method: get
+
+  predictPercentile:
+    handler: src/handlers/predictor/predictor-handler.predictPercentileHandler
+    timeout: 29
+    events:
+      - http:
+          path: predict-percentile
+          method: post
+
+  predictCollege:
+    handler: src/handlers/predictor/predictor-handler.predictCollegeHandler
+    timeout: 29
+    events:
+      - http:
+          path: predict-college
+          method: post
+
+  predictMarks:
+    handler: src/handlers/predictor/marks-predictor-handler.predictMarksHandler
+    timeout: 29
+    events:
+      - http:
+          path: predict-marks
+          method: post
+
+  suggestMarks:
+    handler: src/handlers/predictor/marks-predictor-handler.suggestMarksHandler
+    timeout: 29
+    events:
+      - http:
+          path: suggest-marks
+          method: post
+
+  meritWiseCollege:
+    handler: src/handlers/predictor/marks-predictor-handler.meritWiseCollegeHandler
+    timeout: 29
+    events:
+      - http:
+          path: merit-wise-college
+          method: post
+
+plugins:
+  - serverless-offline
+
+custom:
+  serverless-offline:
+    httpPort: 4802

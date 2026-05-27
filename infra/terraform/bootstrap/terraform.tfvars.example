@@ -1,0 +1,8 @@
+aws_region   = "ap-south-1"
+github_owner = "your-github-username-or-org"
+github_repo  = "admissions-backend-apis"
+
+# Reuse the OIDC provider created by the predictors bootstrap stack:
+# (run `terraform output -state=../../../admissions-predictoins/infra/terraform/bootstrap/terraform.tfstate ...`
+#  or just paste the ARN you saw printed there)
+# github_oidc_provider_arn = "arn:aws:iam::123456789012:oidc-provider/token.actions.githubusercontent.com"

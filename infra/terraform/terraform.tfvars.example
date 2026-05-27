@@ -1,0 +1,22 @@
+aws_region   = "ap-south-1"
+image_tag    = "latest"
+memory_size  = 512
+timeout      = 29
+architecture = "arm64"
+
+# Restrict in prod to your actual frontend origin:
+cors_allow_origins = ["*"]
+
+# When you flip the predictors to AWS_IAM auth, list their ARNs here so the
+# backend role gets lambda:InvokeFunctionUrl permission:
+# predictor_lambda_arns = [
+#   "arn:aws:lambda:ap-south-1:<acct>:function:college-predictor",
+#   "arn:aws:lambda:ap-south-1:<acct>:function:marks-predictor",
+#   "arn:aws:lambda:ap-south-1:<acct>:function:guject-percentile-predictor",
+# ]
+
+env_vars = {
+  # COLLEGE_PREDICTOR_URL    = "https://xxxxx.lambda-url.ap-south-1.on.aws/"
+  # MARKS_PREDICTOR_URL      = "https://yyyyy.lambda-url.ap-south-1.on.aws/"
+  # PERCENTILE_PREDICTOR_URL = "https://zzzzz.lambda-url.ap-south-1.on.aws/"
+}

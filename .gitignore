@@ -1,0 +1,106 @@
+# =============================================================================
+# Node / npm
+# =============================================================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+.npm/
+.yarn/cache
+.yarn/install-state.gz
+
+# =============================================================================
+# TypeScript / build output
+# =============================================================================
+dist/
+build/
+out/
+*.tsbuildinfo
+.esbuild/
+
+# =============================================================================
+# Serverless Framework
+# =============================================================================
+.serverless/
+.serverless_plugins/
+.dynamodb/
+.webpack/
+
+# =============================================================================
+# Test / coverage
+# =============================================================================
+coverage/
+.nyc_output/
+.vitest-cache/
+.vitest/
+
+# =============================================================================
+# Terraform (infra/terraform/**)
+# =============================================================================
+**/.terraform/
+**/.terraform.lock.hcl.bak
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Never commit real tfvars; *.example files ARE committed.
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+!*.tfvars.json.example
+
+# =============================================================================
+# Secrets / env
+# =============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+secrets.yml
+secrets.yaml
+
+# =============================================================================
+# OS junk
+# =============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =============================================================================
+# Editors / IDEs
+# =============================================================================
+.idea/
+.vscode/
+!.vscode/settings.json.example
+!.vscode/extensions.json
+*.sublime-workspace
+*.sublime-project
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# Logs / misc scratch
+# =============================================================================
+*.log
+logs/
+tmp/
+.tmp/
+.cache/
+Untitled
+Untitled.*
